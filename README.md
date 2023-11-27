@@ -6,5 +6,6 @@ Der Solarakku befindet sich zusammen mit einem Heizkabel (Nominalleistung: 30 W)
 
 ![Box](https://github.com/christophschwaerzler/LiFePO4_Heizung_Messung/assets/151140591/de77048b-01fb-4393-b99c-e6d769636ab2)
 
-Dieses Projekt dient der Quantifizierung des Heizverhaltens (insbesondere die erforderliche Heizleistung) und die Effektivitaet der Isolierung.
+Dieses Projekt dient der Quantifizierung des Heizverhaltens (insbesondere die erforderliche Heizleistung) und der Beurteilung der Effektivitaet der Isolierung.
 
+Dazu wurde auf Basis eines Arduino UNO R3 boards, einem Temperatursensor DS18B20 und einem Fotowiderstand sowie einem externen Taster eine einfache Messanordnung realisiert.
