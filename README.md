@@ -14,5 +14,5 @@ Bei jedem Zustandswechsel wird die Zeit (in Sekunden seit dem Messbeginn) und di
 der EEPROM-Speicher voll ist, oder die Messung durch Trennung von der Stromversorgung beendet wird.
 
 Sobald der uC erneut gestartet wird, gibt er als erstes sämtliche abgespeicherte Messwerte am seriellen Ausgang mit 9600 Baud aus.
-Diese Daten können mit einem Terminalprogramm (z.B. Putty, @) oder auch mit der Arduino IDE erfasst und in einer Tabellenkalkulation ausgewertet werden.
+Diese Daten können mit einem Terminalprogramm (z.B. PuTTY, Termite...) oder auch mit der Arduino IDE erfasst und in einer Tabellenkalkulation ausgewertet werden.
 Danach wartet er auf eine Betätigung des externen Tasters, um den Speicher zu löschen und eine erneute Messung zu beginnen.
