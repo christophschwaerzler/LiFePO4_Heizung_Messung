@@ -11,6 +11,7 @@
 // Stromaufnahme:    50 mA
 //
 // Christoph Schwaerzler, OE1CGS
+// V1.1
 // Nov. 2023
 
 #include <EEPROM.h>
@@ -21,14 +22,15 @@
 #define LichtPin                    A0 // Pin A0 fuer Lichtsensor
 #define TasterPin                    5 // Pin D5 fuer den Taster, der den Messvorgang startet
 #define LEDPin                      13 // Pin D13 fuer eingebaute LED zur Bestaetigung des Beginns der Messung
-#define LichtSchwelle               50 // Grenzwert des Lichtsensors, unter der Lichtschwell wird als dunkel, darueber als hell interpretiert
+#define LichtSchwelle              150 // Grenzwert des Lichtsensors, unter der Lichtschwell wird als dunkel, darueber als hell interpretiert
 
 // Variablendeklarationen
 bool lflag                    = false; // Zustand des Lichtsensors, Dunkel = false, Hell = true
 bool lastlflag                = false; // Letzter Zustand des Lichtsensors
-int i                             = 0; // Lokaler Schleifenzaehler
-int time                          = 0; // Zeit seit Programmstart in ganzen Sekunden
-int licht                         = 0; // 10-bit A/D-Wandler Wert des Lichtsensors (0 = Dunkel, 1023 = Hell)
+unsigned int i                    = 0; // Lokaler Schleifenzaehler
+unsigned int j                    = 0; // Schleifenzaehler fuer LED
+unsigned int time                 = 0; // Zeit seit Programmstart in ganzen Sekunden
+unsigned int licht                = 0; // 10-bit A/D-Wandler Wert des Lichtsensors (0 = Dunkel, 1023 = Hell)
 float tempC                       = 0; // Temperatur in Grad Celsius
 
 OneWire oneWire(TempPin);              // An Pin 'TempPin' (a 4.7K resistor is necessary)
@@ -44,7 +46,9 @@ void setup() {
   Serial.print("\t");
   Serial.print("T[°C]");
   Serial.print("\t");
-  Serial.println("Licht[a.u.]");
+  Serial.print("L[a.u.]");
+  Serial.print("\t");
+  Serial.println("V1.1");
 }
 
 void loop() {
@@ -64,8 +68,8 @@ void loop() {
 
   // Warten auf Tastendruck fuer Messbeginn und Bestaetigung durch 3-maliges Blinken der LED
   while (digitalRead(TasterPin)){}
-  i=0;                                                     // Auf Startbefehl fuer Messung durch Tastendruck warten
-  while (i<5){digitalWrite(LEDPin, !digitalRead(LEDPin));delay(500);i++;}   // 3-maliges Blinken als Bestaetigung fuer Messbeginn
+  j=0;                                                     // Auf Startbefehl fuer Messung durch Tastendruck warten
+  while (j<5){digitalWrite(LEDPin, !digitalRead(LEDPin));delay(500);j++;}   // 3-maliges Blinken als Bestaetigung fuer Messbeginn
   
   // EEPROM loeschen um fuer neue Messung bereit zu sein
   i=0;
@@ -93,7 +97,10 @@ void loop() {
   EEPROM.put(i,   time);                                   // Zeit wird als Integer abgespeichert (2 Byte)
   EEPROM.put(i+2, tempC);                                  // Temperatur wird als Floating abgespeichert (4 Byte), die Adresse ist um 2 hoeher
   EEPROM.put(i+6, licht);                                  // Lichtstaerke wird als Integer abgespeichert (2 Byte), die Adresse ist um 6 hoeher
-  delay(500);                                              // Wartet eine halbe Sekunde bevor neuer Messwert abgefragt wird (wegen Stabilitaet Fotosensor)
+  j=0;
+  if(lflag == false){
+    while (j<2){digitalWrite(LEDPin, !digitalRead(LEDPin));delay(300);j++;}   // Langsames Blinken als Anzeige von Heizung aus
+  }
   i = i + 8;                                               // Erhoehung der EEPROM-Adresse fuer die naechsten Messdaten
   }
   digitalWrite(LEDPin, 0);                                 // LED ausschalten als Zeichen, dass Messung beendet ist
