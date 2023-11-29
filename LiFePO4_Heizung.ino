@@ -11,6 +11,7 @@
 // Stromaufnahme:    50 mA
 //
 // Christoph Schwaerzler, OE1CGS
+// V1.2
 // Nov. 2023
 
 #include <EEPROM.h>
@@ -21,15 +22,17 @@
 #define LichtPin                    A0 // Pin A0 fuer Lichtsensor
 #define TasterPin                    5 // Pin D5 fuer den Taster, der den Messvorgang startet
 #define LEDPin                      13 // Pin D13 fuer eingebaute LED zur Bestaetigung des Beginns der Messung
-#define LichtSchwelle               50 // Grenzwert des Lichtsensors, unter der Lichtschwell wird als dunkel, darueber als hell interpretiert
+#define LichtSchwelle              150 // Grenzwert des Lichtsensors, unter der Lichtschwell wird als dunkel, darueber als hell interpretiert
 
 // Variablendeklarationen
 bool lflag                    = false; // Zustand des Lichtsensors, Dunkel = false, Hell = true
 bool lastlflag                = false; // Letzter Zustand des Lichtsensors
-int i                             = 0; // Lokaler Schleifenzaehler
-int time                          = 0; // Zeit seit Programmstart in ganzen Sekunden
-int licht                         = 0; // 10-bit A/D-Wandler Wert des Lichtsensors (0 = Dunkel, 1023 = Hell)
+unsigned int i                    = 0; // Lokaler Schleifenzaehler
+unsigned int j                    = 0; // Schleifenzaehler fuer LED
+unsigned int time                 = 0; // Zeit seit Programmstart in ganzen Sekunden
+unsigned int licht                = 0; // 10-bit A/D-Wandler Wert des Lichtsensors (0 = Dunkel, 1023 = Hell)
 float tempC                       = 0; // Temperatur in Grad Celsius
+int tempCEEPROM                   = 0; // Temperarut in Hundertstel-Grad zur effizienten Speicherung im EEPROM
 
 OneWire oneWire(TempPin);              // An Pin 'TempPin' (a 4.7K resistor is necessary)
 DallasTemperature sensors(&oneWire);   // Pass our oneWire reference to Dallas Temperature sensor
@@ -44,7 +47,9 @@ void setup() {
   Serial.print("\t");
   Serial.print("T[°C]");
   Serial.print("\t");
-  Serial.println("Licht[a.u.]");
+  Serial.print("L[a.u.]");
+  Serial.print("\t");
+  Serial.println("V1.2");
 }
 
 void loop() {
@@ -52,20 +57,20 @@ void loop() {
   i=0;
   while (i < EEPROM.length()){
     EEPROM.get(i,   time);                   // Zeit wird als Integer abgespeichert (2 Byte)
-    EEPROM.get(i+2, tempC);                  // Temperatur wird als Floating abgespeichert (4 Byte), die Adresse ist um 2 hoeher
-    EEPROM.get(i+6, licht);                  // Lichtstaerke wird als Integer abgespeichert (2 Byte), die Adresse ist um 6 hoeher 
+    EEPROM.get(i+2, tempCEEPROM);            // Temperatur wird als Integer abgespeichert (2 Byte), die Adresse ist um 2 hoeher
+    EEPROM.get(i+4, licht);                  // Lichtstaerke wird als Integer abgespeichert (2 Byte), die Adresse ist um 4 hoeher 
     Serial.print(time);
     Serial.print("\t");
-    Serial.print(tempC);
+    Serial.print(tempCEEPROM / 100);
     Serial.print("\t");
     Serial.println(licht);
-    i = i + 8;                                // Insgesamt hat ein Datensatz 8 Byte, daher ist die naechste EEPROM-Adresse um 8 hoeher
+    i = i + 6;                                // Insgesamt hat ein Datensatz 6 Byte, daher ist die naechste EEPROM-Adresse um 6 hoeher
   }
 
   // Warten auf Tastendruck fuer Messbeginn und Bestaetigung durch 3-maliges Blinken der LED
   while (digitalRead(TasterPin)){}
-  i=0;                                                     // Auf Startbefehl fuer Messung durch Tastendruck warten
-  while (i<5){digitalWrite(LEDPin, !digitalRead(LEDPin));delay(500);i++;}   // 3-maliges Blinken als Bestaetigung fuer Messbeginn
+  j=0;                                                     // Auf Startbefehl fuer Messung durch Tastendruck warten
+  while (j<5){digitalWrite(LEDPin, !digitalRead(LEDPin));delay(500);j++;}   // 3-maliges Blinken als Bestaetigung fuer Messbeginn
   
   // EEPROM loeschen um fuer neue Messung bereit zu sein
   i=0;
@@ -73,7 +78,7 @@ void loop() {
 
   // Messschleife, wird solange durchlaufen, bis das EEPROM voll ist oder Strom abgeschaltet wird
   i=0;
-  while (i < EEPROM.length() - 8){                         // Die Messung geht so lange, bis der EEPROM-Speicher voll ist
+  while (i < EEPROM.length() - 6){                         // Die Messung geht so lange, bis der EEPROM-Speicher voll ist
   
   // Test auf Zustandsaenderung des Lichtsensors
   while (lflag == lastlflag){
@@ -89,12 +94,13 @@ void loop() {
   time = (unsigned int)(millis()/1000);                    // Zeit seit Start des uC in ganzen Sekunden, Ueberlauf nach 65536 Sekunden (ca. 18,2 h)
   sensors.requestTemperatures();                           // Request temperature from all DS18B20 sensors on the bus
   tempC = sensors.getTempCByIndex(0);                      // Get temperature in Celsius for the first DS18B20 sensor found on the bus
+  tempCEEPROM = tempC * 100;                                // Speicherplatzsparende Konvertierung in Hundertstel-Grad als Integer
   // Abspeichern der aktuellen Messdaten
   EEPROM.put(i,   time);                                   // Zeit wird als Integer abgespeichert (2 Byte)
-  EEPROM.put(i+2, tempC);                                  // Temperatur wird als Floating abgespeichert (4 Byte), die Adresse ist um 2 hoeher
-  EEPROM.put(i+6, licht);                                  // Lichtstaerke wird als Integer abgespeichert (2 Byte), die Adresse ist um 6 hoeher
-  delay(500);                                              // Wartet eine halbe Sekunde bevor neuer Messwert abgefragt wird (wegen Stabilitaet Fotosensor)
-  i = i + 8;                                               // Erhoehung der EEPROM-Adresse fuer die naechsten Messdaten
+  EEPROM.put(i+2, tempCEEPROM);                                  // Temperatur wird als Floating abgespeichert (4 Byte), die Adresse ist um 2 hoeher
+  EEPROM.put(i+4, licht);                                  // Lichtstaerke wird als Integer abgespeichert (2 Byte), die Adresse ist um 6 hoeher
+  delay(500);                                              // Warten zur Stabilitaetserhoehung
+  i = i + 6;                                               // Erhoehung der EEPROM-Adresse fuer die naechsten Messdaten
   }
   digitalWrite(LEDPin, 0);                                 // LED ausschalten als Zeichen, dass Messung beendet ist
 }
