@@ -11,7 +11,7 @@
 // Stromaufnahme:    50 mA
 //
 // Christoph Schwaerzler, OE1CGS
-// V1.2
+// V1.3
 // Nov. 2023
 
 #include <EEPROM.h>
@@ -22,7 +22,7 @@
 #define LichtPin                    A0 // Pin A0 fuer Lichtsensor
 #define TasterPin                    5 // Pin D5 fuer den Taster, der den Messvorgang startet
 #define LEDPin                      13 // Pin D13 fuer eingebaute LED zur Bestaetigung des Beginns der Messung
-#define LichtSchwelle              150 // Grenzwert des Lichtsensors, unter der Lichtschwell wird als dunkel, darueber als hell interpretiert
+#define LichtSchwelle              28 // Grenzwert des Lichtsensors, unter der Lichtschwell wird als dunkel, darueber als hell interpretiert
 
 // Variablendeklarationen
 bool lflag                    = false; // Zustand des Lichtsensors, Dunkel = false, Hell = true
@@ -49,7 +49,7 @@ void setup() {
   Serial.print("\t");
   Serial.print("L[a.u.]");
   Serial.print("\t");
-  Serial.println("V1.2");
+  Serial.println("V1.3");
 }
 
 void loop() {
@@ -61,7 +61,8 @@ void loop() {
     EEPROM.get(i+4, licht);                  // Lichtstaerke wird als Integer abgespeichert (2 Byte), die Adresse ist um 4 hoeher 
     Serial.print(time);
     Serial.print("\t");
-    Serial.print(tempCEEPROM / 100);
+    tempC= float(tempCEEPROM) / 100;
+    Serial.print(tempC);
     Serial.print("\t");
     Serial.println(licht);
     i = i + 6;                                // Insgesamt hat ein Datensatz 6 Byte, daher ist die naechste EEPROM-Adresse um 6 hoeher

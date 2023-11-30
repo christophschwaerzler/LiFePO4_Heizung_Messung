@@ -16,3 +16,7 @@ der EEPROM-Speicher voll ist, oder die Messung durch Trennung von der Stromverso
 Sobald der uC erneut gestartet wird, gibt er als erstes sämtliche abgespeicherte Messwerte am seriellen Ausgang mit 9600 Baud aus.
 Diese Daten können mit einem Terminalprogramm (z.B. PuTTY, Termite...) oder auch mit der Arduino IDE erfasst und in einer Tabellenkalkulation ausgewertet werden.
 Danach wartet er auf eine Betätigung des externen Tasters, um den Speicher zu löschen und eine erneute Messung zu beginnen.
+
+Die Auswertung der Messdaten hat die Tauglichkeit der Isolierung und Heizung des Solarakkus bestätigt. Die damit berechnet Mindestaußentempertur
+beträgt -44°C, was für einen Einsatz in Mitteleuropa ausreichend sein sollte. Rund um den Gefrierpunkt ist die mittlere Leistungsaufnahme der
+Heizung @@ W. Der aus den Messdaten ermittelte Wärmewiderstand der Isolierung beträgt @@ W/K.
