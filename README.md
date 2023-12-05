@@ -6,7 +6,7 @@ Der Solarakku befindet sich zusammen mit einem Heizkabel (Nominalleistung: 35 W)
 
 ![Box](https://github.com/christophschwaerzler/LiFePO4_Heizung_Messung/assets/151140591/de77048b-01fb-4393-b99c-e6d769636ab2)
 
-Dieses Projekt dient der Quantifizierung des Heizverhaltens (insbesondere die erforderliche Heizleistung) und der Beurteilung der Effektivitaet der Isolierung.
+Dieses Projekt dient der Quantifizierung des Heizverhaltens (insbesondere erforderliche Heizleistung) und der Beurteilung der Effektivität der Isolierung.
 
 Dazu wurde auf Basis eines Arduino UNO R3 boards, einem Temperatursensor DS18B20, einem Fotowiderstand sowie einem externen Taster eine einfache Messanordnung realisiert.
 Der Fotowiderstand wird direkt vor der Zustandsanzeige (LED) des Heizungscontrollers angebracht und erfasst damit, ob die Heizung ein- oder ausgeschaltet ist.
@@ -20,4 +20,7 @@ Danach wartet er auf eine Betätigung des externen Tasters, um den Speicher zu l
 Die Auswertung der Messdaten hat die Tauglichkeit der Isolierung und Heizung des Solarakkus bestätigt. Die damit berechnete Mindestaußentemperatur
 beträgt -47°C, was für einen Einsatz in Mitteleuropa ausreichend sein sollte. Rund um den Gefrierpunkt ist die mittlere Leistungsaufnahme der
 Heizung 4,4 W. Die aus diesen Messdaten ermittelte Wärmeleitfähigkeit der Isolierung beträgt 0,65 W/K und ist damit sogar etwas besser als
-der Planwert. 
+der Planwert.
+
+![Leistung](https://github.com/christophschwaerzler/LiFePO4_Heizung_Messung/assets/151140591/77c2a619-041e-4989-bfb9-848ba7c943ec)
+
