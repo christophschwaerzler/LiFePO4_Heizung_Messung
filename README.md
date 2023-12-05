@@ -18,6 +18,6 @@ Diese Daten können mit einem Terminalprogramm (z.B. PuTTY, Termite...) oder auc
 Danach wartet er auf eine Betätigung des externen Tasters, um den Speicher zu löschen und eine erneute Messung zu beginnen.
 
 Die Auswertung der Messdaten hat die Tauglichkeit der Isolierung und Heizung des Solarakkus bestätigt. Die damit berechnete Mindestaußentemperatur
-beträgt -44°C, was für einen Einsatz in Mitteleuropa ausreichend sein sollte. Rund um den Gefrierpunkt ist die mittlere Leistungsaufnahme der
-Heizung etwa 5 W. Die aus diesen Messdaten ermittelte Wärmeleitfähigkeit der Isolierung beträgt @@ W/K und ist damit sogar etwas besser als
+beträgt -47°C, was für einen Einsatz in Mitteleuropa ausreichend sein sollte. Rund um den Gefrierpunkt ist die mittlere Leistungsaufnahme der
+Heizung 4,4 W. Die aus diesen Messdaten ermittelte Wärmeleitfähigkeit der Isolierung beträgt 0,65 W/K und ist damit sogar etwas besser als
 der Planwert. 
